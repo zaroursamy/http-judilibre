@@ -1,4 +1,20 @@
 use reqwest::header::{ACCEPT, CONTENT_TYPE};
+use serde::{Serialize, Deserialize};
+
+#[derive(Debug, Serialize, Deserialize)]
+struct JudiResult{
+    id: String,
+    source: String,
+    text: String
+}
+
+#[derive(Debug, Serialize, Deserialize)]
+struct JudiResponse{
+    batch: u8,
+    batch_size: u8,
+    results: Vec<JudiResult>
+}
+
 
 #[tokio::main]
 async fn main() -> Result<(), reqwest::Error> {
@@ -6,7 +22,7 @@ async fn main() -> Result<(), reqwest::Error> {
     let base_export_url = "https://sandbox-api.piste.gouv.fr/cassation/judilibre/v1.0/export?";
     let date_start = "2022-01-01";
     let date_end = "2022-05-30";
-    let batch_size = 10;
+    let batch_size = 2;
     let batch = 0;
 
     let client_id = "68e791c6-974b-4522-a8f9-dd4bb6a5ea68";
@@ -14,14 +30,14 @@ async fn main() -> Result<(), reqwest::Error> {
 
     println!("{:?}", &url);
 
-    let response = reqwest::Client::new()
+    let response: JudiResponse = reqwest::Client::new()
         .get(url)
         .header("KeyId", client_id)
         .header(ACCEPT, "application/json")
         .header(CONTENT_TYPE, "application/json")
         .send()
         .await?
-        .text()
+        .json()
         .await?;
 
     println!("Success! {:#?}", response);
