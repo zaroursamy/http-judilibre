@@ -17,22 +17,6 @@ struct JudiResponse {
 }
 
 #[tokio::main]
-async fn get_response(
-    client: Client,
-    url: String,
-    key_id: &str,
-) -> Result<JudiResponse, reqwest::Error> {
-    client
-        .get(url)
-        .header("KeyId", key_id)
-        .header(ACCEPT, "application/json")
-        .header(CONTENT_TYPE, "application/json")
-        .send()
-        .await?
-        .json()
-        .await?
-}
-#[tokio::main]
 async fn main() -> Result<(), reqwest::Error> {
     let base_export_url = "https://sandbox-api.piste.gouv.fr/cassation/judilibre/v1.0/export?";
     let date_start = "2022-01-01";
@@ -47,7 +31,15 @@ async fn main() -> Result<(), reqwest::Error> {
 
     let client = Client::new();
 
-    let response: JudiResponse = get_response(client, url, key_id);
+    let response: JudiResponse = client
+        .get(url)
+        .header("KeyId", key_id)
+        .header(ACCEPT, "application/json")
+        .header(CONTENT_TYPE, "application/json")
+        .send()
+        .await?
+        .json()
+        .await?;
 
     println!("Success! {:#?}", response);
 
