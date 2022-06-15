@@ -1,20 +1,7 @@
+use api_model::JudiResponse;
 use reqwest::header::{ACCEPT, CONTENT_TYPE};
 use reqwest::Client;
-use serde::{Deserialize, Serialize};
-
-#[derive(Debug, Serialize, Deserialize)]
-struct JudiResult {
-    id: String,
-    source: String,
-    text: String,
-}
-
-#[derive(Debug, Serialize, Deserialize)]
-struct JudiResponse {
-    batch: u8,
-    batch_size: u8,
-    results: Vec<JudiResult>,
-}
+mod api_model;
 
 #[tokio::main]
 async fn main() -> Result<(), reqwest::Error> {
